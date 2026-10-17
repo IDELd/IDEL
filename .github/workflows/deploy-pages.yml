@@ -1,0 +1,63 @@
+# Сборка и деплой фронтенда на GitHub Pages.
+#
+# Что нужно один раз в настройках репозитория:
+#   Settings → Pages → Source: GitHub Actions
+#   Settings → Secrets and variables → Actions → New repository secret
+#       VITE_API_URL = https://ваш-бэкенд (например https://idel-api.onrender.com)
+#
+# Сборка идёт с базой /<имя-репозитория>/ — так GitHub Pages раздаёт проект
+# из подпапки. Для пользовательского домена или <user>.github.io задайте
+# VITE_BASE=/ в шаге сборки.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # backend нужен только для postinstall (npm install в backend) — это часть
+      # package.json, поэтому ставим зависимости полностью.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_BASE: /${{ github.event.repository.name }}/
+        run: npm run build:prod
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

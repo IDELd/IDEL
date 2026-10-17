@@ -1,0 +1,16 @@
+node_modules
+backend/node_modules
+bot-api
+dist
+logs
+.github
+backend/database.db
+backend/database.db-wal
+backend/database.db-shm
+backend/uploads
+backend/.env
+.env
+*.log
+__pycache__
+.venv*
+.tmp-*

@@ -1,0 +1,63 @@
+# Blueprint для Render: бэкенд ИДЕЛЬ из Dockerfile с постоянным диском.
+#
+# Как использовать: залейте репозиторий на GitHub и в Render выберите
+# "New → Blueprint", указав этот файл. Секреты (SMTP, Supabase, JWT) Render
+# сгенерирует или попросит заполнить при создании сервиса.
+#
+# Важно: SQLite требует постоянного диска — на бесплатном плане Render диска
+# нет, нужен план starter и выше.
+services:
+  - type: web
+    name: idel-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /api/rules
+    disk:
+      name: idel-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: PORT
+        value: 5001
+      - key: NODE_ENV
+        value: production
+      - key: DB_PATH
+        value: /data/database.db
+      - key: UPLOAD_DIR
+        value: /data/uploads
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SESSION_ENC_KEY
+        generateValue: true
+      - key: CSRF_SECRET
+        generateValue: true
+      - key: MESSAGE_ENC_KEY
+        generateValue: true
+      - key: BOT_CODE_SECRET
+        generateValue: true
+      # Адрес фронтенда на GitHub Pages — для ссылок в письмах и в ботах.
+      - key: FRONTEND_URL
+        sync: false
+      # SMTP (Яндекс/Google/Mail.ru — пароль приложения).
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: 465
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      # Supabase: файлы медиа и зеркало премиума/описаний.
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SUPABASE_MEDIA_BUCKET
+        value: media
+      - key: MAX_MEDIA_FILES
+        value: 2000
+      - key: MEDIA_TTL_DAYS
+        value: 30

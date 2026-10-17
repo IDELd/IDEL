@@ -1,0 +1,39 @@
+node_modules/
+backend/node_modules/
+bot-api/.venv*/
+__pycache__/
+*.pyc
+dist/
+dist-ssr/
+.DS_Store
+Thumbs.db
+*.log
+
+# Логи сервера (обычные и критические события)
+logs/
+
+# Секреты и окружение
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# backend: база и загруженные файлы не коммитим
+backend/database.db
+backend/database.db-journal
+backend/database.db-wal
+backend/database.db-shm
+backend/uploads/avatars/*
+backend/uploads/covers/*
+backend/uploads/posts/*
+backend/uploads/voice/*
+backend/uploads/video/*
+!backend/uploads/**/.gitkeep
+
+# Тестовые артефакты
+bot-api/.wh-test.json
+bot-api/.py-test-context.json
+.tmp-*
+*.tsbuildinfo
+.vscode/
+.idea/
