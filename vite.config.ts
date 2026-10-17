@@ -26,6 +26,8 @@ export default defineConfig(({ mode }) => {
     base: process.env.VITE_BASE || '/',
     build: {
       outDir: 'dist',
+      // Всегда чистим dist: иначе старые чанки попадают в артефакт Pages.
+      emptyOutDir: true,
     }
   };
 });
