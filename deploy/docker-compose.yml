@@ -1,0 +1,49 @@
+# Docker Compose для бесплатной ВМ (Oracle Cloud Always Free, Google Cloud e2-micro,
+# любой VPS): бэкенд ИДЕЛЬ + Caddy с автоматическим HTTPS.
+#
+# Запуск на сервере:
+#   cd deploy
+#   cp .env.example .env        # DOMAIN=...
+#   cp ../backend/.env.example ../backend/.env   # и заполнить секреты
+#   docker compose up -d --build
+#
+# Данные (SQLite + загрузки) лежат в volume idel-data и переживают перезапуски.
+# Caddy сам получает сертификат Let's Encrypt для домена из DOMAIN.
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ../backend/.env
+    environment:
+      PORT: "5001"
+      NODE_ENV: production
+      DB_PATH: /data/database.db
+      UPLOAD_DIR: /data/uploads
+    volumes:
+      - idel-data:/data
+    expose:
+      - "5001"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Укажите DOMAIN в deploy/.env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - api
+
+volumes:
+  idel-data:
+  caddy-data:
+  caddy-config:

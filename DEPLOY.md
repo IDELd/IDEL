@@ -1,5 +1,10 @@
 # Деплой ИДЕЛЬ
 
+> **Нужен бесплатный хостинг, который всегда включён?** Смотрите
+> [DEPLOY-FREE.md](DEPLOY-FREE.md) — бесплатная ВМ (Oracle Cloud Always Free /
+> GCP e2-micro) + Docker + автоматический HTTPS. Схема ниже — платный Render
+> (проще, но ~$7/мес).
+
 Схема: **фронтенд — GitHub Pages** (статика), **бэкенд — Render** (Docker),
 **медиа и часть данных — Supabase**, **письма — SMTP**.
 

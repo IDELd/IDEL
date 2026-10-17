@@ -1,0 +1,6 @@
+# Caddy: HTTPS для API. Сертификат Let's Encrypt выдаётся автоматически
+# для домена из переменной DOMAIN (см. deploy/.env).
+{$DOMAIN} {
+	encode gzip
+	reverse_proxy api:5001
+}
